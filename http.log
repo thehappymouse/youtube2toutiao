@@ -1,0 +1,205 @@
+https://mp.toutiao.com/article/get_server_time/
+
+{
+  "message": "success",
+  "now": 1522504755,
+  "data": {
+    "server_time": 1522504755
+  },
+  "reason": ""
+}
+
+检查 md5
+http://mp.toutiao.com/video/video_uniq_api/?md5=60ab59daa806f4e8c62a2f40fbfff832
+{
+  "message": "success",
+  "data": "",
+  "is_uniq": true
+}
+重复的结果
+{
+  "message": "success",
+  "data": "https://www.toutiao.com/item/6539109687877435917",
+  "is_uniq": false
+}
+
+第一次请求：
+Request URL: http://mp.toutiao.com/video/video_api/
+Request Method: POST
+
+Content-Length: 51
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+
+
+Form Data --> json_data: {"api":"chunk_upload_info"}
+<-- {
+  "url": "http://videoapi.byted.org/video/v2/api/chunk_upload_info/1/pgc?start_transcoder=0",
+  "message": "success",
+  "data": "{\"code\":0,\"message\":\"success\",\"reason\":\"success\",\"upload_url\":\"http://i.snssdk.com/video/v2/chunk_upload/1/pgc/1522504758/330008fdfec992ecf2786754bd8d7a7b/5a8097484845408481553c68e4a0d8b1\",\"upload_id\":\"5a8097484845408481553c68e4a0d8b1\"}"
+}
+
+第二：
+Request URL: http://i.snssdk.com/video/fedata/1/pgc/5a8097484845408481553c68e4a0d8b1
+Request Method: POST
+Status Code: 200 OK
+
+Content-Length: 1347
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+Origin: https://mp.toutiao.com
+Referer: https://mp.toutiao.com/profile_v3/xigua/upload-video
+
+FormData --> log: {"e":"开始上传","code":0,"ref_id":"5a8097484845408481553c68e4a0d8b1","at":1522504753845,"timestamp":1522504758903,"f":"大圣归来.mp4","url":"http://mp.toutiao.com/profile_v3/xigua/upload-video","ubs":0,"fs":30780659,"log_id":null,"via":null,"text":"","ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36","cookie":"UM_distinctid=160490778164c9-05b9ef66bcee37-17396d56-13c680-1604907781752d; _ba=BA0.2-20180304-5110e-tnDHPUa2kposxvyLOJcn; _ga=GA1.2.830181196.1520146009; slaask-token-4ead732e8206531cc37f8ed618f08986=user-180713; uuid=\"w:d62fc43823c84299a706278b3d59c28f\"; _ga=GA1.3.830181196.1520146009; __tea_sdk__ssid=0688f82f-eef4-48ac-9e50-a404c8f4b4ff; tt_webid=6530933786749961741; __tea_sdk__user_unique_id=94107185706; login_flag=54f5a3dc3817e33a1ca3a82cb0f57ddb; _mp_auth_key=e6156cbc46c854b33b30b7a179f260ea; ptcn_no=ff9e08c00277347be6cbfc1637a72197","log_data":[],"username":"大力出奇击","mid":1594097155488776}
+<--  {"message": "success", "code": 0}
+
+真正开始上传 第一个应该是ajax跨域请求
+Request URL: http://i.snssdk.com/video/v2/chunk_upload/1/pgc/1522504758/330008fdfec992ecf2786754bd8d7a7b/5a8097484845408481553c68e4a0d8b1
+Request Method: OPTIONS
+
+Accept: */*
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9,fr;q=0.8,en;q=0.7
+Access-Control-Request-Headers: content-range
+Access-Control-Request-Method: POST
+Host: i.snssdk.com
+Origin: http://mp.toutiao.com
+Proxy-Connection: keep-alive
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36
+
+真实的文件上传
+
+Request URL: http://i.snssdk.com/video/v2/chunk_upload/1/pgc/1522504758/330008fdfec992ecf2786754bd8d7a7b/5a8097484845408481553c68e4a0d8b1
+Request Method: POST
+Status Code: 200 OK
+
+Accept: */*
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q=0.9,fr;q=0.8,en;q=0.7
+Content-Length: 10485955
+Content-Range: bytes 0-10485759/30780659
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundaryBXlAk6kMQTi1vsEB
+Host: i.snssdk.com
+Origin: http://mp.toutiao.com
+Proxy-Connection: keep-alive
+Referer: http://mp.toutiao.com/profile_v3/xigua/upload-video
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36
+
+Request Playload
+------WebKitFormBoundaryBXlAk6kMQTi1vsEB
+Content-Disposition: form-data; name="video_file"; filename="大圣归来.mp4"
+Content-Type: video/mp4
+
+
+------WebKitFormBoundaryBXlAk6kMQTi1vsEB--
+<--
+{"code":0,"message":"success","reason":"success","expect_bytes":-1,"bytes":-1,"poster_uri":"74cf0011c033133116fc","poster_url":"http://p0.pstatp.com/large/74cf0011c033133116fc","crc32":142862743,"url":""}
+
+
+上传成功后，再确认一下
+Request URL: http://i.snssdk.com/video/fedata/1/pgc/5a8097484845408481553c68e4a0d8b1
+Request Method: POST
+Status Code: 200 OK
+
+form data -->
+log: {"e":"文件上传成功","ts":1522504757370,"te":1522504911444,"ref_id":"5a8097484845408481553c68e4a0d8b1","at":1522504753845,"timestamp":1522504911444,"f":"大圣归来.mp4","url":"http://mp.toutiao.com/profile_v3/xigua/upload-video","ubs":20971520,"fs":30780659,"log_id":"","via":"","text":"{\"code\":0,\"message\":\"success\",\"reason\":\"success\",\"expect_bytes\":-1,\"bytes\":-1,\"poster_uri\":\"74cf0011c033133116fc\",\"poster_url\":\"http://p0.pstatp.com/large/74cf0011c033133116fc\",\"crc32\":142862743,\"url\":\"\"}","ua":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36","cookie":"UM_distinctid=160490778164c9-05b9ef66bcee37-17396d56-13c680-1604907781752d; _ba=BA0.2-20180304-5110e-tnDHPUa2kposxvyLOJcn; _ga=GA1.2.830181196.1520146009; slaask-token-4ead732e8206531cc37f8ed618f08986=user-180713; uuid=\"w:d62fc43823c84299a706278b3d59c28f\"; _ga=GA1.3.830181196.1520146009; __tea_sdk__ssid=0688f82f-eef4-48ac-9e50-a404c8f4b4ff; tt_webid=6530933786749961741; __tea_sdk__user_unique_id=94107185706; login_flag=54f5a3dc3817e33a1ca3a82cb0f57ddb; _mp_auth_key=e6156cbc46c854b33b30b7a179f260ea; ptcn_no=ff9e08c00277347be6cbfc1637a72197","log_data":[{"code":0,"message":"success","reason":"success","expect_bytes":10485760,"bytes":10485759,"poster_uri":"","poster_url":"","crc32":1537606983,"url":""},{"code":0,"message":"success","reason":"success","expect_bytes":20971520,"bytes":20971519,"poster_uri":"","poster_url":"","crc32":2947348216,"url":""},{"code":0,"message":"success","reason":"success","expect_bytes":-1,"bytes":-1,"poster_uri":"74cf0011c033133116fc","poster_url":"http://p0.pstatp.com/large/74cf0011c033133116fc","crc32":142862743,"url":""}],"username":"大力出奇击","mid":1594097155488776}
+
+标题输入后的检查：
+Request URL: http://mp.toutiao.com/check_title/?title=%E4%BB%8E%E5%89%8D%E7%9A%84%E6%88%91%EF%BC%8C%E5%A4%A7%E5%9C%A3%E5%BD%92%E6%9D%A5%E4%B8%BB%E9%A2%98%E6%9B%B2%EF%BC%8C%E5%BE%88%E5%94%AF%E7%BE%8E
+Request Method: GET
+// query string: title: 从前的我，大圣归来主题曲，很唯美
+《--
+{
+  "status": 2,
+  "message": "success",
+  "valid": 1,
+  "check_title_msg": "success"
+}
+
+
+获取封面
+Request URL: http://mp.toutiao.com/video/video_system_thumb/?vid=5a8097484845408481553c68e4a0d8b1&item_id=
+Request Method: GET
+Status Code: 200 OK
+《--
+{
+  "message": "success",
+  "now": 1522504925,
+  "data": [
+    {
+      "width": 1280,
+      "uri": "74d2000de964f4235586",
+      "src_uri": "74d1000f6e458594f911",
+      "height": 544
+    },
+    {
+      "width": 1280,
+      "uri": "74d1000f6e67421b40b3",
+      "src_uri": "74d000119e45c07e47a3",
+      "height": 544
+    }
+  ],
+  "reason": ""
+}
+
+封面图： https://p1.pstatp.com/origin/74d2000de964f4235586
+
+封面确认，，访问它， 不知道啥意思
+Request URL: http://mp.toutiao.com/video/video_thumb_report/?vid=5a8097484845408481553c68e4a0d8b1&poster_uri=74d2000de964f4235586&poster_type=1
+Request Method: GET
+Status Code: 200 OK
+
+《--
+{
+  "message": "success",
+  "now": 1522505024,
+  "data": "",
+  "reason": ""
+}
+
+提交：
+1，标题再来一次
+Request URL: http://mp.toutiao.com/statistic/rumor_check/?title=%E4%BB%8E%E5%89%8D%E7%9A%84%E6%88%91%EF%BC%8C%E5%A4%A7%E5%9C%A3%E5%BD%92%E6%9D%A5%E4%B8%BB%E9%A2%98%E6%9B%B2%EF%BC%8C%E5%BE%88%E5%94%AF%E7%BE%8E
+Request Method: GET
+Status Code: 200 OK
+
+{
+  "message": "success",
+  "code": 0,
+  "data": {
+    "hits": []
+  }
+}
+
+2， 内容上传
+Request URL: http://mp.toutiao.com/core/article/edit_article_post/?source=mp&type=purevideo
+Request Method: POST
+Status Code: 200 OK
+
+  Data
+
+  article_ad_type: 3
+  title: 从前的我，大圣归来主题曲，很唯美
+  abstract: 从前的我，大圣归来主题曲，很唯美
+  tag: video_music
+  extern_link:
+  is_fans_article: 0
+  content: <p>{!-- PGC_VIDEO:{"sp":"toutiao","vid":"5a8097484845408481553c68e4a0d8b1","vu":"5a8097484845408481553c68e4a0d8b1","thumb_url":"74d2000de964f4235586","src_thumb_uri":"74d1000f6e458594f911","vname":"大圣归来.mp4"} --}</p>
+  add_third_title: 0
+  timer_status: 0
+  timer_time: 2018-04-01 09:58
+  recommend_auto_analyse: 0
+  article_label: 大圣归来;唯美MV
+  from_diagnosis: 0
+  article_type: 1
+  praise: 0
+  pgc_debut: 0
+  save: 1
+
+
+《--
+{
+  "message": "\u63d0\u4ea4\u6210\u529f",
+  "code": 0,
+  "data": {
+    "pgc_id": "6539109687877435917"
+  }
+}
