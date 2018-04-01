@@ -1,12 +1,11 @@
 package admin
 
 import (
-	"net/http"
-	"github.com/gpmgo/gopm/modules/log"
-	"fmt"
-	"io/ioutil"
-	"strings"
 	"encoding/json"
+	"net/http"
+	"strings"
+
+	"github.com/gpmgo/gopm/modules/log"
 )
 
 const video_api = "http://mp.toutiao.com/video/video_api/"
@@ -18,6 +17,7 @@ type VideoApiData struct {
 	UploadUrl string `json:"upload_url"`
 	UploadID  string `json:"upload_id"`
 }
+
 type VideoApiResp struct {
 	Url     string `json:"url"`
 	Message string `json:"message"`
@@ -25,20 +25,8 @@ type VideoApiResp struct {
 	ApiData *VideoApiData
 }
 
-//func (r *VideoApiResp) UnmarshalJSON(body []byte) error {
-//
-//	json.Unmarshal(body, r)
-//
-//	r.ApiData = &VideoApiData{}
-//	//if err == nil {
-//		err := json.Unmarshal([]byte(r.Data), r.ApiData)
-//	//}
-//	return err
-//	//return nil
-//}
-
 // 获取视频的上传路径
-func VideoApi() {
+func VideoApi() *VideoApiData {
 	data := "json_data=%7B%22api%22%3A%22chunk_upload_info%22%7D"
 	req, err := NewTiaoRequest(http.MethodPost,
 		video_api, strings.NewReader(data))
@@ -47,7 +35,7 @@ func VideoApi() {
 
 	if err != nil {
 		log.Error("make request err:", err)
-		return
+		return nil
 	}
 
 	client := http.Client{}
@@ -56,14 +44,12 @@ func VideoApi() {
 		log.Error(err.Error())
 	}
 	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-	//fmt.Println(resp.StatusCode, string(body))
-	apiResp := &VideoApiResp{ApiData: &VideoApiData{}}
 
-	//apiResp.UnmarshalJSON(body)
-	json.Unmarshal(body, apiResp)
+	apiResp := &VideoApiResp{ApiData: &VideoApiData{}}
+	json.NewDecoder(resp.Body).Decode(apiResp)
+
+	// 需要再次处理
 	json.Unmarshal([]byte(apiResp.Data), apiResp.ApiData)
 
-	fmt.Println(apiResp)
-	//fmt.Println(apiResp.Data.UploadUrl)
+	return apiResp.ApiData
 }

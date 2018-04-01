@@ -1,15 +1,15 @@
 package admin
 
 import (
-	"os"
 	"io"
-	"net/http"
 	"io/ioutil"
+	"net/http"
+	"os"
 
 	"github.com/gpmgo/gopm/modules/log"
 )
 
-func getCookie() []byte  {
+func getCookie() []byte {
 	data, err := ioutil.ReadFile("cookie.txt")
 	if err != nil {
 		log.Error("读取 cookie.txt 文件失败 :", err)
