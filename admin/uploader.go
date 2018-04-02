@@ -1,19 +1,18 @@
 package admin
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
+	"mime/multipart"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
 	"net/url"
-
-	"bytes"
-	"mime/multipart"
-	"os"
 
 	"github.com/gpmgo/gopm/modules/log"
 )
@@ -142,7 +141,7 @@ func VideoLogStart(v *VideoFile, api *VideoApiData) {
 // 上传文件
 func VideoUpload(v *VideoFile, api *VideoApiData) *VideoUploadResponse {
 	uploadResp := &VideoUploadResponse{}
-
+	log.Warn("上传文件")
 	uploadResp.StartTime = time.Now().Unix()
 	resp, err := upload(v, api)
 	if err != nil {
@@ -151,11 +150,9 @@ func VideoUpload(v *VideoFile, api *VideoApiData) *VideoUploadResponse {
 	uploadResp.EndTime = time.Now().Unix()
 
 	defer resp.Body.Close()
-
 	decoder := json.NewDecoder(resp.Body)
-
 	decoder.Decode(uploadResp)
-
+	log.Warn("上传完成")
 	return uploadResp
 
 }
@@ -242,5 +239,5 @@ func VideoLogSueecss(response *VideoUploadResponse, api *VideoApiData, v *VideoF
 	}
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println("开始上传的上报结果", string(body))
+	fmt.Println("上传完成的上报结果", string(body))
 }
