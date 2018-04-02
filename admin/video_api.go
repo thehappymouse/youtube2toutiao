@@ -1,13 +1,16 @@
 package admin
 
 import (
-	"encoding/json"
 	"net/http"
+
+	"fmt"
+
+	"encoding/json"
 
 	"github.com/gpmgo/gopm/modules/log"
 )
 
-const apiurl = "http://mp.toutiao.com/video/apiurl/"
+const apiurl = "http://mp.toutiao.com/video/video_api/"
 
 type VideoApiData struct {
 	Code      int    `json:"code"`
@@ -15,13 +18,6 @@ type VideoApiData struct {
 	Reason    string `json:"reason"`
 	UploadUrl string `json:"upload_url"`
 	UploadID  string `json:"upload_id"`
-}
-
-type VideoApiResult struct {
-	Url     string `json:"url"`
-	Message string `json:"message"`
-	Data    string `json:"data"`
-	ApiData *VideoApiData
 }
 
 // 获取视频的上传路径
@@ -35,11 +31,12 @@ func VideoApi() *VideoApiData {
 		return nil
 	}
 
-	apiResp := &VideoApiResult{ApiData: &VideoApiData{}}
-	doRequest(req, apiResp)
+	result := &CommonResult{}
+	doRequest(req, result)
 
+	apidata := &VideoApiData{}
 	// 需要再次处理
-	json.Unmarshal([]byte(apiResp.Data), apiResp.ApiData)
+	json.Unmarshal([]byte(fmt.Sprintf("%s", result.Data)), apidata)
 
-	return apiResp.ApiData
+	return apidata
 }

@@ -16,6 +16,18 @@ import (
 	"github.com/gpmgo/gopm/modules/log"
 )
 
+// 头条通用的响应结构
+// Data一般存放的返回数据
+type CommonResult struct {
+	Url     string `json:"url"`
+	Code    int    `json:"code"`
+	Now     int    `json:"now"`
+	Reason  string `json:"reason"`
+	Message string `json:"message"`
+	//Data    json.RawMessage `json:"data"`
+	Data interface{} `json:"data"`
+}
+
 func getCookie() []byte {
 	data, err := ioutil.ReadFile("cookie.txt")
 	if err != nil {
@@ -125,7 +137,7 @@ func doRequest2(req *http.Request, callback func(reader io.ReadCloser)) {
 
 func doRequest(req *http.Request, r interface{}) {
 	doRequest2(req, func(reader io.ReadCloser) {
-		der := json.NewDecoder(reader)
-		der.Decode(r)
+		data, _ := ioutil.ReadAll(reader)
+		json.Unmarshal(data, r)
 	})
 }

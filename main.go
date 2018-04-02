@@ -24,6 +24,7 @@ func ContentList(req *http.Request) {
 }
 
 func main() {
+	admin.LoadUserInfo(admin.User)
 	videofile := admin.NewVideoFile("/Users/apple/Downloads/toutiaohao/W_sCTMEcb9SSY_zh.mp4")
 
 	md5Resp := admin.Md5Check(videofile.Md5)
@@ -34,13 +35,13 @@ func main() {
 
 	videoapi := admin.VideoApi()
 
-	log.Warn("video/api: %s", videoapi)
+	log.Warn("video/api: %v", videoapi)
 
 	admin.VideoLogStart(&videofile, videoapi)
 
 	uploadResponse := admin.VideoUpload(&videofile, videoapi)
 
-	log.Warn("uploadResponse: %s", uploadResponse)
+	log.Warn("uploadResponse: %v", uploadResponse)
 
 	admin.VideoLogSueecss(uploadResponse, videoapi, &videofile)
 

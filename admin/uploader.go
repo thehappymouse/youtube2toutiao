@@ -50,7 +50,7 @@ type logData struct {
 	Cookie    string        `json:"cookie"`
 	LogData   []interface{} `json:"log_data"`
 	UserName  string        `json:"username"`
-	Mid       string        `json:"mid"`
+	Mid       int64         `json:"mid"`
 }
 
 const logUrl = "http://i.snssdk.com/video/fedata/1/pgc/%s"
@@ -70,8 +70,8 @@ func VideoLogStart(v *VideoFile, api *VideoApiData) {
 	ld.UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36"
 	ld.Cookie = string(getCookie())
 	ld.LogData = []interface{}{}
-	ld.UserName = "大力出奇击"
-	ld.Mid = "1594097155488776"
+	ld.UserName = User.DisplayName
+	ld.Mid = User.ID
 
 	logdata, _ := json.Marshal(ld)
 	params := url.Values{}
@@ -125,8 +125,8 @@ func VideoLogSueecss(response *VideoUploadResponse, api *VideoApiData, v *VideoF
 	ld.UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36"
 	ld.Cookie = string(getCookie())
 	ld.LogData = []interface{}{response}
-	ld.UserName = "大力出奇击"
-	ld.Mid = "1594097155488776"
+	ld.UserName = User.DisplayName
+	ld.Mid = User.ID
 
 	logdata, _ := json.Marshal(ld)
 	params := url.Values{}
