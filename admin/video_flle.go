@@ -31,6 +31,5 @@ func NewVideoFile(path string) VideoFile {
 	cipherStr := md5Ctx.Sum(nil)
 
 	v.Md5 = hex.EncodeToString(cipherStr)
-
 	return v
 }

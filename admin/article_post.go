@@ -4,11 +4,8 @@ import "net/http"
 import (
 	"fmt"
 	"net/url"
-	"strings"
 
 	"reflect"
-
-	"encoding/json"
 
 	"github.com/gpmgo/gopm/modules/log"
 )
@@ -47,8 +44,9 @@ type ArticleResult struct {
 	Data    string `json:"data"`
 }
 
-func ArticlePost(f ArticleForm) {
-	// 将 f 压入params
+// 将结构体转换成 FormQuery
+func struct2form(f interface{}) string {
+
 	params := url.Values{}
 	t := reflect.TypeOf(f)
 	v := reflect.ValueOf(f)
@@ -57,23 +55,21 @@ func ArticlePost(f ArticleForm) {
 		value := fmt.Sprintf("%v", v.Field(k).Interface())
 		params.Set(field.Tag.Get("json"), value)
 	}
-	data := params.Encode()
+	return params.Encode()
+}
+
+func ArticlePost(f ArticleForm) {
+	data := struct2form(f)
+
 	log.Warn("PostRawData: %s", data)
-	req, err := NewTiaoRequest(http.MethodPost, posturl, strings.NewReader(data))
+	req, err := NewTiaoRequest(http.MethodPost, posturl, data)
 	if err != nil {
 		panic(err)
 	}
 	req.Header.Set("Content-Length", string(len(data)))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
 
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Error(err.Error())
-	}
-	defer resp.Body.Close()
-	r := &ArticleResult{}
-	der := json.NewDecoder(resp.Body)
-	der.Decode(r)
-	log.Warn("节上传结果: %v", r)
+	result := &ArticleResult{}
+	doRequest(req, result)
+	log.Warn("节目传结果: %v", result)
 }
