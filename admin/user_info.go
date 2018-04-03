@@ -25,16 +25,14 @@ type MediaInfo struct {
 // 当前用户
 var User *UserInfo
 
-func LoadUserInfo(u *UserInfo) {
+func LoadUserInfo() {
 	req, err := NewTiaoRequest(http.MethodGet, infoUrl, "")
 	if err != nil {
 		panic(err)
 	}
 	result := &CommonResult{}
 	doRequest(req, result)
-	media := &MediaInfo{
-		Media: u,
-	}
+	media := &MediaInfo{}
 
 	// todo 多余，需要找到更好的方法
 	tmpb, _ := json.Marshal(result.Data)
