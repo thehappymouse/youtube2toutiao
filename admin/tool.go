@@ -1,18 +1,16 @@
 package admin
 
 import (
-	"encoding/json"
-	"io"
-	"io/ioutil"
-	"net/http"
-	"os"
-
 	"bytes"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"mime/multipart"
-
+	"net/http"
+	"os"
 	"strings"
 
+	"dali.cc/toutiao/downloader"
 	"github.com/gpmgo/gopm/modules/log"
 )
 
@@ -58,19 +56,19 @@ func NewTiaoRequest(method, url string, body string) (*http.Request, error) {
 }
 
 // 创建上传文件的请求
-func NewUploadFileRequest(v *VideoFile, url string) (*http.Request, error) {
+func NewUploadFileRequest(v *downloader.VideoFile, url string) (*http.Request, error) {
 	body_buf := bytes.NewBufferString("")
 	body_writer := multipart.NewWriter(body_buf)
 
 	// use the body_writer to write the Part headers to the buffer
-	_, err := body_writer.CreateFormFile("video_file", v.Info.Name())
+	_, err := body_writer.CreateFormFile("video_file", v.FilePath)
 	if err != nil {
 		fmt.Println("error writing to buffer")
 		return nil, err
 	}
 
 	// the file data will be the second part of the body
-	fh, err := os.Open(v.LocalPath)
+	fh, err := os.Open(v.FilePath)
 	if err != nil {
 		fmt.Println("error opening file")
 		return nil, err
@@ -85,7 +83,7 @@ func NewUploadFileRequest(v *VideoFile, url string) (*http.Request, error) {
 	request_reader := io.MultiReader(body_buf, fh, close_buf)
 	fi, err := fh.Stat()
 	if err != nil {
-		fmt.Printf("Error Stating file: %s", v.LocalPath)
+		fmt.Printf("Error Stating file: %s", v.FilePath)
 		return nil, err
 	}
 	req, err := http.NewRequest("POST", url, request_reader)
@@ -119,25 +117,4 @@ func NewLogRequest(method, url, data string) (*http.Request, error) {
 	}
 
 	return req, err
-}
-
-func doRequest2(req *http.Request, callback func(reader io.ReadCloser)) {
-	client := http.Client{}
-	response, err := client.Do(req)
-	if err != nil {
-		log.Error(err.Error())
-		return
-	}
-	defer response.Body.Close()
-	if response.StatusCode != http.StatusOK {
-		log.Error("%s %s %s", req.URL, "result code ==> ", response.StatusCode)
-	}
-	callback(response.Body)
-}
-
-func doRequest(req *http.Request, r interface{}) {
-	doRequest2(req, func(reader io.ReadCloser) {
-		data, _ := ioutil.ReadAll(reader)
-		json.Unmarshal(data, r)
-	})
 }

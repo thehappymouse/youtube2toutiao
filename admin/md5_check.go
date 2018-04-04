@@ -3,6 +3,8 @@ package admin
 import (
 	"net/http"
 	"net/url"
+
+	"dali.cc/toutiao/tools"
 )
 
 const checkUrl = "http://mp.toutiao.com/video/video_uniq_api/"
@@ -26,6 +28,6 @@ func Md5Check(md5 string) *Md5Resp {
 	}
 
 	md5resp := &Md5Resp{}
-	doRequest(request, md5resp)
+	tools.DoRequestJson(request, md5resp)
 	return md5resp
 }

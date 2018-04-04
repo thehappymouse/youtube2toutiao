@@ -1,18 +1,20 @@
 package admin
 
-import "net/http"
 import (
 	"fmt"
+	"net/http"
 	"net/url"
-
 	"reflect"
 
+	"time"
+
+	"dali.cc/toutiao/downloader"
+	"dali.cc/toutiao/tools"
 	"github.com/gpmgo/gopm/modules/log"
 )
 
 // 提交作品
-
-const posturl = "http://mp.toutiao.com/core/article/edit_article_post/?source=mp&type=purevideo"
+const posturl = "http://mp.toutiao.com/core/article/edit_article_post/?downloader=mp&type=purevideo"
 
 type ArticleForm struct {
 	ArticleAdType int    `json:"article_ad_type"`
@@ -58,21 +60,21 @@ func struct2form(f interface{}) string {
 	return params.Encode()
 }
 
-func ArticlePost(videofile VideoFile, videoapi *VideoApiData, uploadResponse *VideoUploadResponse) {
+func ArticlePost(videofile downloader.VideoFile, videoapi *VideoApiData, uploadResponse *VideoUploadResponse) {
 
 	form := ArticleForm{
 		ArticleAdType: 3,
-		Title:         videofile.Info.Name(),
-		Abstract:      videofile.Info.Name(),
-		Tag:           "video_music",
+		Title:         videofile.Title,
+		Abstract:      videofile.Desc,
+		Tag:           "video_animation",
 		Content:       `<p>{!-- PGC_VIDEO:{"sp":"toutiao","vid":"%s","vu":"%[1]s","thumb_url":"%s","src_thumb_uri":"%[2]s","vname":"%s"} --}</p>`,
-		TimerTime:     "2018-04-02 17:29",
-		ArticleLabel:  "动漫;唯美MV",
+		TimerTime:     time.Now().Format(("2006-01-02 15:04")),
+		ArticleLabel:  "动漫;搞笑;",
 		ArticleType:   1,
 		Save:          1,
 	}
-	form.Content = fmt.Sprintf(form.Content, videoapi.UploadID, uploadResponse.PosterUri, videofile.Info.Name())
-	fmt.Println(form.Content)
+	form.Content = fmt.Sprintf(form.Content, videoapi.UploadID, uploadResponse.PosterUri, videofile.Title)
+	fmt.Println(form)
 
 	data := struct2form(form)
 
@@ -83,6 +85,6 @@ func ArticlePost(videofile VideoFile, videoapi *VideoApiData, uploadResponse *Vi
 	}
 
 	result := &ArticleResult{}
-	doRequest(req, result)
-	log.Warn("节目传结果: %v", result)
+	tools.DoRequestJson(req, result)
+	log.Warn("作品提交结果: %v", result)
 }

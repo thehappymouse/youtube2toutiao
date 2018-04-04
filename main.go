@@ -1,33 +1,44 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"io/ioutil"
-	"net/http"
+	"os"
 
 	"dali.cc/toutiao/admin"
+	"dali.cc/toutiao/downloader"
+	"dali.cc/toutiao/tools"
+	"dali.cc/toutiao/translator"
 	"github.com/gpmgo/gopm/modules/log"
 )
 
-func ContentList(req *http.Request) {
-	client := http.Client{}
-	resp, err := client.Do(req)
-
-	if err != nil {
-		log.Error("http get error: ", err)
-		return
-	}
-	defer resp.Body.Close()
-	body, _ := ioutil.ReadAll(resp.Body)
-
-	fmt.Println(resp.StatusCode, (string(body)))
+var dao = &translator.YouDao{
+	AppKey: "6a0f0aec8e860c65",
+	SecKey: "vTrsGcDDmD0X6RIUUpCi0oEGazF30BOz",
 }
+var urlstr = flag.String("url", "", "请输入一个 youtube 地址")
 
 func main() {
-	admin.LoadUserInfo()
-	videofile := admin.NewVideoFile("/Users/apple/Downloads/toutiaohao/W_sCTMEcb9SSY_zh.mp4")
+	flag.Parse()
+	ok, video := downloader.Download(*urlstr)
+	if !ok {
+		log.Error("下载源文件出错")
+		os.Exit(1)
+	}
 
-	md5Resp := admin.Md5Check(videofile.Md5)
+	// 分析标题和内容
+	// todo 可以扩展string 自由调用吗
+	video.Title = translator.Translate(dao, video.Title)
+	video.Desc = translator.Translate(dao, video.Desc)
+	video.Title = tools.CutByUtf8(video.Title, 30)
+	video.Desc = tools.CutByUtf8(video.Desc, 300)
+
+	fmt.Println(video)
+
+	// 文件准备完成
+	admin.LoadUserInfo()
+
+	md5Resp := admin.Md5Check(video.Md5)
 	if !md5Resp.IsUniq {
 		log.Warn("Video Already use in [%s]", md5Resp.Data)
 		return
@@ -37,13 +48,13 @@ func main() {
 
 	log.Warn("video/api: %v", videoapi)
 
-	admin.VideoLogStart(&videofile, videoapi)
+	admin.VideoLogStart(&video, videoapi)
 
-	uploadResponse := admin.VideoUpload(&videofile, videoapi)
+	uploadResponse := admin.VideoUpload(&video, videoapi)
 
 	log.Warn("uploadResponse: %v", uploadResponse)
 
-	admin.VideoLogSueecss(uploadResponse, videoapi, &videofile)
+	admin.VideoLogSueecss(uploadResponse, videoapi, &video)
 
-	admin.ArticlePost(videofile, videoapi, uploadResponse)
+	admin.ArticlePost(video, videoapi, uploadResponse)
 }

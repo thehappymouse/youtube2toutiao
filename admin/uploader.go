@@ -10,6 +10,8 @@ import (
 
 	"net/url"
 
+	"dali.cc/toutiao/downloader"
+	"dali.cc/toutiao/tools"
 	"github.com/gpmgo/gopm/modules/log"
 )
 
@@ -56,7 +58,7 @@ type logData struct {
 const logUrl = "http://i.snssdk.com/video/fedata/1/pgc/%s"
 
 // 开始上传
-func VideoLogStart(v *VideoFile, api *VideoApiData) {
+func VideoLogStart(v *downloader.VideoFile, api *VideoApiData) {
 
 	nowtime := time.Now().Unix()
 	ld := logData{}
@@ -64,9 +66,9 @@ func VideoLogStart(v *VideoFile, api *VideoApiData) {
 	ld.RefID = api.UploadID
 	ld.At = nowtime
 	ld.Timestamp = nowtime
-	ld.F = v.Info.Name()
+	ld.F = v.FilePath
 	ld.Url = "http://mp.toutiao.com/profile_v3/xigua/upload-video"
-	ld.FileSize = v.Info.Size()
+	ld.FileSize = v.FileSize
 	ld.UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36"
 	ld.Cookie = string(getCookie())
 	ld.LogData = []interface{}{}
@@ -86,14 +88,14 @@ func VideoLogStart(v *VideoFile, api *VideoApiData) {
 	req.Header.Set("Content-Length", string(len(data)))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
 
-	doRequest2(req, func(reader io.ReadCloser) {
+	tools.DoReqeustByFn(req, func(reader io.ReadCloser) {
 		body, _ := ioutil.ReadAll(reader)
 		log.Warn("开始上传的上报结果: %s", string(body))
 	})
 }
 
 // 上传文件
-func VideoUpload(v *VideoFile, api *VideoApiData) *VideoUploadResponse {
+func VideoUpload(v *downloader.VideoFile, api *VideoApiData) *VideoUploadResponse {
 	uploadResp := &VideoUploadResponse{}
 	log.Warn("上传文件")
 	uploadResp.StartTime = time.Now().Unix()
@@ -102,7 +104,7 @@ func VideoUpload(v *VideoFile, api *VideoApiData) *VideoUploadResponse {
 	if err != nil {
 		panic(err)
 	}
-	doRequest(req, uploadResp)
+	tools.DoRequestJson(req, uploadResp)
 	uploadResp.EndTime = time.Now().Unix()
 	log.Warn("上传完成")
 	return uploadResp
@@ -110,7 +112,7 @@ func VideoUpload(v *VideoFile, api *VideoApiData) *VideoUploadResponse {
 }
 
 // 文件上传成功后的上报
-func VideoLogSueecss(response *VideoUploadResponse, api *VideoApiData, v *VideoFile) {
+func VideoLogSueecss(response *VideoUploadResponse, api *VideoApiData, v *downloader.VideoFile) {
 	nowtime := time.Now().Unix()
 	ld := logData{}
 	ld.E = "文件上传成功"
@@ -119,9 +121,9 @@ func VideoLogSueecss(response *VideoUploadResponse, api *VideoApiData, v *VideoF
 	ld.RefID = api.UploadID
 	ld.At = nowtime
 	ld.Timestamp = nowtime
-	ld.F = v.Info.Name()
+	ld.F = v.FilePath
 	ld.Url = "http://mp.toutiao.com/profile_v3/xigua/upload-video"
-	ld.FileSize = v.Info.Size()
+	ld.FileSize = v.FileSize
 	ld.UserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36"
 	ld.Cookie = string(getCookie())
 	ld.LogData = []interface{}{response}
@@ -137,7 +139,7 @@ func VideoLogSueecss(response *VideoUploadResponse, api *VideoApiData, v *VideoF
 		panic(err)
 	}
 
-	doRequest2(req, func(reader io.ReadCloser) {
+	tools.DoReqeustByFn(req, func(reader io.ReadCloser) {
 		body, _ := ioutil.ReadAll(reader)
 		log.Warn("上传完成的上报结果: %s", string(body))
 	})

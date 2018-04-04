@@ -203,3 +203,31 @@ Status Code: 200 OK
     "pgc_id": "6539109687877435917"
   }
 }
+
+修改封面时，提交文件：
+pgc_watermark = 0  不美化
+POST   http://mp.toutiao.com/tools/upload_picture/?pgc_watermark=0
+
+name="upfile";
+
+{
+  "width": 1280,
+  "state": "SUCCESS",
+  "origin_web_uri": "pgc-image/1522763806153423d59d57b",
+  "title": "",
+  "url": "http://p2.pstatp.com/large/pgc-image/1522763806153423d59d57b",
+  "image_type": 1,
+  "original": "pgc-image/1522763806153423d59d57b",
+  "height": 720
+}
+
+
+get
+http://mp.toutiao.com/video/video_thumb_report/?vid=fbf77c02261746f8a794235b5a636a22&poster_uri=pgc-image%2F15227645389968bdfc4dc7f&poster_type=2
+《-
+{
+  "message": "success",
+  "now": 1522764539,
+  "data": "",
+  "reason": ""
+}

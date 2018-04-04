@@ -5,6 +5,7 @@ import (
 
 	"encoding/json"
 
+	"dali.cc/toutiao/tools"
 	"github.com/gpmgo/gopm/modules/log"
 )
 
@@ -31,7 +32,7 @@ func LoadUserInfo() {
 		panic(err)
 	}
 	result := &CommonResult{}
-	doRequest(req, result)
+	tools.DoRequestJson(req, result)
 	media := &MediaInfo{}
 
 	// todo 多余，需要找到更好的方法

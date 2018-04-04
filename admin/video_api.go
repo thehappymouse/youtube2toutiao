@@ -7,6 +7,7 @@ import (
 
 	"encoding/json"
 
+	"dali.cc/toutiao/tools"
 	"github.com/gpmgo/gopm/modules/log"
 )
 
@@ -32,7 +33,7 @@ func VideoApi() *VideoApiData {
 	}
 
 	result := &CommonResult{}
-	doRequest(req, result)
+	tools.DoRequestJson(req, result)
 
 	apidata := &VideoApiData{}
 	// 需要再次处理
