@@ -16,11 +16,11 @@ var dao = &translator.YouDao{
 	AppKey: "6a0f0aec8e860c65",
 	SecKey: "vTrsGcDDmD0X6RIUUpCi0oEGazF30BOz",
 }
-var urlstr = flag.String("url", "", "请输入一个 youtube 地址")
+var id = flag.String("url", "", "请输入一个 youtube 地址")
 
 func main() {
 	flag.Parse()
-	ok, video := downloader.Download(*urlstr)
+	ok, video := downloader.Download(*id)
 	if !ok {
 		log.Error("下载源文件出错")
 		os.Exit(1)
@@ -28,12 +28,13 @@ func main() {
 
 	// 分析标题和内容
 	// todo 可以扩展string 自由调用吗
+
+	fmt.Println(video.Title)
+
 	video.Title = translator.Translate(dao, video.Title)
 	video.Desc = translator.Translate(dao, video.Desc)
 	video.Title = tools.CutByUtf8(video.Title, 30)
 	video.Desc = tools.CutByUtf8(video.Desc, 300)
-
-	fmt.Println(video)
 
 	// 文件准备完成
 	admin.LoadUserInfo()

@@ -6,6 +6,20 @@ import (
 	"unicode/utf8"
 )
 
+type Describe string
+
+func (s Describe) String() string {
+	return string(s)
+}
+
+// 删除字符串中的 url 数据
+func (s Describe) TrimUrl() Describe {
+	reg := regexp.MustCompile(`(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`)
+	r := reg.ReplaceAllString(s.String(), "")
+	r = strings.Trim(r, "\n")
+	return s
+}
+
 // 删除字符串中的 url 数据
 func TrimUrl(s string) string {
 	reg := regexp.MustCompile(`(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]+[-A-Za-z0-9+&@#/%=~_|]`)

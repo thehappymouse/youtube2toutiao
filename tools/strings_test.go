@@ -6,12 +6,13 @@ import (
 )
 
 func TestTrimUrl(t *testing.T) {
-	s := `https://youtu.be/lvObk195BQU
+	var s Describe
+	s = `https://youtu.be/lvObk195BQU
 The most funny Memorable and interesting moments from the cartoon about the minions in one short film
 https://youtu.be/lvObk195BQU`
 
-	r := TrimUrl(s)
-	if strings.Index(r, "http://") != -1 {
+	r := s.TrimUrl()
+	if strings.Index(string(r), "http://") != -1 {
 		t.Errorf("%s 中依然包含url信息", r)
 	}
 }
