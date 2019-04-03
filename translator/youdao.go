@@ -11,7 +11,10 @@ import (
 
 	"strconv"
 
+	"fmt"
+
 	"dali.cc/toutiao/tools"
+	"github.com/gpmgo/gopm/modules/log"
 )
 
 const (
@@ -45,12 +48,13 @@ func (t *YouDao) builSign(in, salt string) string {
 func (t *YouDao) Translate(in string) string {
 	params := url.Values{}
 
+	log.Warn("Translate:[%s]", in)
+
 	params.Set("q", in)
 	params.Set("from", "auto")
 	params.Set("to", "zh-CHS")
 	params.Set("appKey", t.AppKey)
 	params.Set("salt", strconv.Itoa(rand.Intn(10000)))
-	//params.Set("salt", "1234")
 	params.Set("sign", t.builSign(in, params.Get("salt")))
 
 	req, _ := http.NewRequest(http.MethodPost, api_url, strings.NewReader(params.Encode()))
@@ -59,5 +63,6 @@ func (t *YouDao) Translate(in string) string {
 	result := youdaoResult{}
 
 	tools.DoRequestJson(req, &result)
+	fmt.Println("--------", result)
 	return result.Translation[0]
 }

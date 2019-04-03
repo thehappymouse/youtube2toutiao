@@ -27,6 +27,19 @@ func TestParseFileName(t *testing.T) {
 			"[download] Men in Black (1997) - It's a Squid Scene (4_8) _ Movieclips-UqbTLJ0U84M.mp4 has already been downloaded",
 			"[download] 100% of 18.79MiB"},
 			"Men in Black (1997) - It's a Squid Scene (4_8) _ Movieclips-UqbTLJ0U84M.mp4"},
+		{
+			[]string{
+				"[youtube] 4OSH3dYpnvo: Downloading webpage",
+				"[youtube] 4OSH3dYpnvo: Downloading video info webpage",
+				"[youtube] 4OSH3dYpnvo: Extracting video information",
+				"[info] Writing video description to: 超人特攻隊2 _ HD最新中文電影預告 (The Incredibles 2)-4OSH3dYpnvo.description",
+				"[youtube] 4OSH3dYpnvo: Downloading thumbnail ...",
+				"[youtube] 4OSH3dYpnvo: Writing thumbnail to: 超人特攻隊2 _ HD最新中文電影預告 (The Incredibles 2)-4OSH3dYpnvo.jpg",
+				"[download] Destination: 超人特攻隊2 _ HD最新中文電影預告 (The Incredibles 2)-4OSH3dYpnvo.mp4",
+				"[download] 100% of 22.28MiB in 00:1220MiB/s ETA 00:000nown ETA",
+			},
+			"超人特攻隊2 _ HD最新中文電影預告 (The Incredibles 2)-4OSH3dYpnvo.mp4",
+		},
 	}
 	for _, ts := range tests {
 		title := ParseFileName(ts.ss)
@@ -40,7 +53,7 @@ func TestParseFileName(t *testing.T) {
 func TestDownload(t *testing.T) {
 	DownloadCommand = "./bin/youtube.sh"
 	ok, filename := Download("https://www.youtube.com/watch?v=UqbTLJ0U84M")
-	if !ok || filename == "" {
+	if !ok || filename.FilePath == "" {
 		t.Error("下载失败了")
 	}
 

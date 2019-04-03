@@ -12,6 +12,18 @@ import (
 	"github.com/gpmgo/gopm/modules/log"
 )
 
+type A struct {
+	year int
+}
+
+func (a A) Greet() { fmt.Println("Hello GolangUK", a.year) }
+
+type B struct {
+	A
+}
+
+func (b B) Greet() { fmt.Println("Welcome to GolangUK", b.year) }
+
 var dao = &translator.YouDao{
 	AppKey: "6a0f0aec8e860c65",
 	SecKey: "vTrsGcDDmD0X6RIUUpCi0oEGazF30BOz",
