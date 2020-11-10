@@ -40,9 +40,24 @@ func TestParseFileName(t *testing.T) {
 			},
 			"超人特攻隊2 _ HD最新中文電影預告 (The Incredibles 2)-4OSH3dYpnvo.mp4",
 		},
+		{
+			[]string{
+				"[./bin/youtube.sh https://www.youtube.com/watch?v=iR0xbwP16ys]",
+				"pwd /Users/apple/MyGoProjects/dali.cc/youtube2toutiao/downloader",
+				"[youtube] iR0xbwP16ys: Downloading webpage",
+				"[youtube] iR0xbwP16ys: Downloading MPD manifest",
+				"[info] Writing video description to: 科普奇闻 美国登月从阿波罗11号开始, 前10次都干嘛了-iR0xbwP16ys.description",
+				"[youtube] iR0xbwP16ys: Downloading thumbnail ...",
+				"[youtube] iR0xbwP16ys: Writing thumbnail to: 科普奇闻 美国登月从阿波罗11号开始, 前10次都干嘛了-iR0xbwP16ys.webp",
+				"[download] 科普奇闻 美国登月从阿波罗11号开始, 前10次都干嘛了-iR0xbwP16ys.mp4 has already been downloaded",
+				"[download] 100% of 14.00MiB",
+			},
+			"科普奇闻 美国登月从阿波罗11号开始, 前10次都干嘛了-iR0xbwP16ys.mp4",
+		},
 	}
 	for _, ts := range tests {
 		title := ParseFileName(ts.ss)
+		//basename := tools.FileNameOnly(title)
 		if title != ts.right {
 			t.Errorf("title exptcted: [%s], but got [%s]", ts.right, title)
 		}
@@ -52,11 +67,8 @@ func TestParseFileName(t *testing.T) {
 
 func TestDownload(t *testing.T) {
 	DownloadCommand = "./bin/youtube.sh"
-	ok, filename := Download("https://www.youtube.com/watch?v=UqbTLJ0U84M")
+	ok, filename := Download("iR0xbwP16ys")
 	if !ok || filename.FilePath == "" {
 		t.Error("下载失败了")
 	}
-
-	//info, err := os.Stat(filename)
-
 }

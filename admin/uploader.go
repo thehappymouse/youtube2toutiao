@@ -7,12 +7,12 @@ import (
 	"io/ioutil"
 	"net/http"
 	"time"
+	"toutiao/downloader"
+	"toutiao/tools"
 
+	"github.com/rs/zerolog/log"
 	"net/url"
 
-	"dali.cc/toutiao/downloader"
-	"dali.cc/toutiao/tools"
-	"github.com/gpmgo/gopm/modules/log"
 )
 
 // 上传文件的返回结果
@@ -90,14 +90,14 @@ func VideoLogStart(v *downloader.VideoFile, api *VideoApiData) {
 
 	tools.DoReqeustByFn(req, func(reader io.ReadCloser) {
 		body, _ := ioutil.ReadAll(reader)
-		log.Warn("开始上传的上报结果: %s", string(body))
+		log.Warn().Msgf("开始上传的上报结果: %s", string(body))
 	})
 }
 
 // 上传文件
 func VideoUpload(v *downloader.VideoFile, api *VideoApiData) *VideoUploadResponse {
 	uploadResp := &VideoUploadResponse{}
-	log.Warn("上传文件")
+	log.Warn().Msg("上传文件")
 	uploadResp.StartTime = time.Now().Unix()
 
 	req, err := NewUploadFileRequest(v, api.UploadUrl)
@@ -106,7 +106,7 @@ func VideoUpload(v *downloader.VideoFile, api *VideoApiData) *VideoUploadRespons
 	}
 	tools.DoRequestJson(req, uploadResp)
 	uploadResp.EndTime = time.Now().Unix()
-	log.Warn("上传完成")
+	log.Warn().Msg("上传完成")
 	return uploadResp
 
 }
@@ -141,6 +141,6 @@ func VideoLogSueecss(response *VideoUploadResponse, api *VideoApiData, v *downlo
 
 	tools.DoReqeustByFn(req, func(reader io.ReadCloser) {
 		body, _ := ioutil.ReadAll(reader)
-		log.Warn("上传完成的上报结果: %s", string(body))
+		log.Warn().Msgf("上传完成的上报结果: %s", string(body))
 	})
 }

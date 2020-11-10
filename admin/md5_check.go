@@ -3,8 +3,7 @@ package admin
 import (
 	"net/http"
 	"net/url"
-
-	"dali.cc/toutiao/tools"
+	"toutiao/tools"
 )
 
 const checkUrl = "http://mp.toutiao.com/video/video_uniq_api/"

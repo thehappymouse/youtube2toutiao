@@ -2,15 +2,13 @@ package admin
 
 import (
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"net/http"
 	"net/url"
 	"reflect"
-
+	"toutiao/downloader"
+	"toutiao/tools"
 	"time"
-
-	"dali.cc/toutiao/downloader"
-	"dali.cc/toutiao/tools"
-	"github.com/gpmgo/gopm/modules/log"
 )
 
 // 提交作品
@@ -78,7 +76,7 @@ func ArticlePost(videofile downloader.VideoFile, videoapi *VideoApiData, uploadR
 
 	data := struct2form(form)
 
-	log.Warn("PostRawData: %s", data)
+	log.Warn().Msgf("PostRawData: %s", data)
 	req, err := NewTiaoRequest(http.MethodPost, posturl, data)
 	if err != nil {
 		panic(err)
@@ -86,5 +84,5 @@ func ArticlePost(videofile downloader.VideoFile, videoapi *VideoApiData, uploadR
 
 	result := &ArticleResult{}
 	tools.DoRequestJson(req, result)
-	log.Warn("作品提交结果: %v", result)
+	log.Warn().Msgf("作品提交结果: %v", result)
 }

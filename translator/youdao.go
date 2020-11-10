@@ -4,17 +4,13 @@ import (
 	"bytes"
 	"crypto/md5"
 	"encoding/hex"
+	"github.com/rs/zerolog/log"
 	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
-
 	"strconv"
-
-	"fmt"
-
-	"dali.cc/toutiao/tools"
-	"github.com/gpmgo/gopm/modules/log"
+	"toutiao/tools"
 )
 
 const (
@@ -48,7 +44,7 @@ func (t *YouDao) builSign(in, salt string) string {
 func (t *YouDao) Translate(in string) string {
 	params := url.Values{}
 
-	log.Warn("Translate:[%s]", in)
+	log.Warn().Msgf("Translate:[%s]", in)
 
 	params.Set("q", in)
 	params.Set("from", "auto")
@@ -63,6 +59,6 @@ func (t *YouDao) Translate(in string) string {
 	result := youdaoResult{}
 
 	tools.DoRequestJson(req, &result)
-	fmt.Println("--------", result)
+	log.Warn().Msgf("Out:[%s]", result.Translation[0])
 	return result.Translation[0]
 }

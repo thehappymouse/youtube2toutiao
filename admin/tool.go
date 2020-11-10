@@ -3,15 +3,14 @@ package admin
 import (
 	"bytes"
 	"fmt"
+	"github.com/rs/zerolog/log"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"strings"
-
-	"dali.cc/toutiao/downloader"
-	"github.com/gpmgo/gopm/modules/log"
+	"toutiao/downloader"
 )
 
 // 头条通用的响应结构
@@ -29,7 +28,7 @@ type CommonResult struct {
 func getCookie() []byte {
 	data, err := ioutil.ReadFile("cookie.txt")
 	if err != nil {
-		log.Error("读取 cookie.txt 文件失败 :", err)
+		log.Error().Msgf("读取 cookie.txt 文件失败 :", err)
 		os.Exit(0)
 	}
 	return data

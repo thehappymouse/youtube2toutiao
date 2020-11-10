@@ -1,14 +1,15 @@
 package admin
 
 import (
+	"github.com/rs/zerolog/log"
 	"net/http"
+	"toutiao/tools"
 
 	"fmt"
 
 	"encoding/json"
 
-	"dali.cc/toutiao/tools"
-	"github.com/gpmgo/gopm/modules/log"
+
 )
 
 const apiurl = "http://mp.toutiao.com/video/video_api/"
@@ -28,7 +29,7 @@ func VideoApi() *VideoApiData {
 		apiurl, data)
 
 	if err != nil {
-		log.Error("make request err:", err)
+		log.Error().Msgf("make request err:", err)
 		return nil
 	}
 

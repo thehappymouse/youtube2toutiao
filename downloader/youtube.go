@@ -1,14 +1,14 @@
 package downloader
 
 import (
+	"github.com/rs/zerolog/log"
 	"strings"
+	"toutiao/tools"
 
 	"io/ioutil"
 
 	"os"
 
-	"dali.cc/toutiao/tools"
-	"github.com/gpmgo/gopm/modules/log"
 )
 
 // 在打印信息中查找文件名
@@ -35,19 +35,24 @@ func ParseFileName(ss []string) (title string) {
 var DownloadCommand = "./downloader/bin/youtube.sh"
 
 func Download(id string) (ok bool, v VideoFile) {
-	url := "https://www.youtube.com/watch?v=" + id
+	//url := "https://www.youtube.com/watch?v=" + id
+	url := "https://www.bilibili.com/video/" + id
 	params := []string{url}
 	ok, ss := tools.ExecCommand(DownloadCommand, params)
 	if !ok {
-		log.Warn("%v", ss)
+		log.Warn().Msgf("%s", ss)
 		return
 	}
 	filename := ParseFileName(ss)
+	if filename == "" {
+		log.Error().Msgf("不能解析到文件名")
+		return
+	}
 	basename := tools.FileNameOnly(filename)
 
 	desc, err := ioutil.ReadFile(basename + ".description")
 	if err != nil {
-		log.Error("打开描述文件[%s]失败", err)
+		log.Error().Msgf("打开描述文件[%s]失败", err)
 	}
 
 	_, md5 := tools.Md5(filename)

@@ -1,12 +1,12 @@
 package admin
 
 import (
+	"github.com/rs/zerolog/log"
 	"net/http"
+	"toutiao/tools"
 
 	"encoding/json"
 
-	"dali.cc/toutiao/tools"
-	"github.com/gpmgo/gopm/modules/log"
 )
 
 // 获取用户信息
@@ -40,5 +40,5 @@ func LoadUserInfo() {
 	json.Unmarshal(tmpb, media)
 
 	User = media.Media
-	log.Warn("用户信息：%v", User)
+	log.Warn().Msgf("用户信息：%v", User)
 }
