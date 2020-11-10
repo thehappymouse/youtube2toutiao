@@ -35,8 +35,7 @@ func ParseFileName(ss []string) (title string) {
 var DownloadCommand = "./downloader/bin/youtube.sh"
 
 func Download(id string) (ok bool, v VideoFile) {
-	//url := "https://www.youtube.com/watch?v=" + id
-	url := "https://www.bilibili.com/video/" + id
+	url := "https://www.youtube.com/watch?v=" + id
 	params := []string{url}
 	ok, ss := tools.ExecCommand(DownloadCommand, params)
 	if !ok {
